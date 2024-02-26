@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - NOTEBOOK</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/notebook.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato" />
+    <link rel="icon" type="image/x-icon" href="/Images/favicon.ico">
+
+
+    <style>
+
+        body{ font: 1em/1.5 "Lato", sans-serif; }
+
+        header h1, header h2 {
+            margin: 0;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+        }
+
+        header h2 {
+            text-transform: uppercase;
+            margin-top: -0.5em;
+            font-size: 1.5em;
+        }
+
+        .navbar {
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 3;
+            background-color: cornflowerblue;
+            display: flex;
+            justify-content: right;
+            padding:1vh 0;
+        }
+
+        .navbar a {
+            color: #fff;
+            text-decoration: none;
+            padding: 1rem 2rem;
+            font-size: 1.2em;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .navbar a:hover{ background-color: darkgrey; }
+
+        footer {
+            position:absolute;
+            bottom:0px;
+            width: -webkit-fill-available;
+            background-color: cornflowerblue;
+            padding: 20px 0;
+            text-align: center;
+            font-size: 1.2em;
+            color: #f5f5f5;
+        }
+
+        footer a {
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        footer a:hover{ color: #f5f5f5; }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="/Index">NOTEBOOK</a>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <a href="/Identity/Account/Logout">@User.Identity.Name.ToUpper()</a>
+            }
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+        function changeHeaderHeight(height) {
+            document.querySelector('header').style.height = `${height}vh`;
+        }
+    </script>
+</body>
+</html>

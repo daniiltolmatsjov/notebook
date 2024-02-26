@@ -1,0 +1,178 @@
+﻿@page
+@model notebook.Pages.webModel
+@{
+    ViewData["Title"] = "NewNote";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            border: 0.5px solid black;
+            padding: 20px;
+            background-color: #F1E6CF;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 0.5px solid black;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: lightseagreen;
+            color: white;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        buttonEdit {
+            background-color: dodgerblue;
+            color: white;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        buttonRemove {
+            background-color: red;
+            color: white;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 5px;
+        }x
+
+        #NoteList {
+            margin-top: 20px;
+        }
+
+            #NoteList div {
+                border: 1px;
+                padding: 10px;
+                margin-bottom: 10px;
+                background-color: #F1E6CF;
+            }
+
+            #NoteList button {
+                margin-top: 5px;
+                margin-right: 5px;
+            }
+
+                #NoteList button:hover {
+                    background-color: #45a049;
+                }
+    </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("NoteForm");
+            const NoteList = document.getElementById("NoteList");
+            let Notes = JSON.parse(localStorage.getItem("Notes")) || [];
+
+            form.addEventListener("submit", function (event) {
+                event.preventDefault();
+
+                const NoteName = document.getElementById("NoteName").value;
+                const NoteContent = document.getElementById("NoteContent").value;
+
+                const NoteInfo = {
+                    name: NoteName,
+                    Content: NoteContent
+                };
+
+                const selectedIndex = form.getAttribute("data-selected-index");
+                if (selectedIndex !== null) {
+                    Notes[selectedIndex] = NoteInfo;
+                    form.removeAttribute("data-selected-index");
+                } else {
+                    Notes.push(NoteInfo);
+                }
+
+                localStorage.setItem("Notes", JSON.stringify(Notes));
+                displayNotes();
+                form.reset();
+                updateButtonLabel("ADD A NOTE");
+            });
+
+            function displayNotes() {
+                NoteList.innerHTML = "";
+                Notes = JSON.parse(localStorage.getItem("Notes")) || [];
+
+                Notes.forEach((Note, index) => {
+                    const NoteDiv = document.createElement("div");
+                    NoteDiv.innerHTML = `<strong>${Note.name}</strong><br>
+                                                                       ${Note.Content}<br>`;
+
+                    const editButton = document.createElement("buttonEdit");
+                    editButton.textContent = "EDIT ";
+                    editButton.addEventListener("click", function () {
+                        editNote(index);
+                    });
+
+                    const deleteButton = document.createElement("buttonRemove");
+                    deleteButton.textContent = "REMOVE ";
+                    deleteButton.addEventListener("click", function () {
+                        deleteNote(index);
+                    });
+
+                    NoteDiv.appendChild(editButton);
+                    NoteDiv.appendChild(deleteButton);
+
+                    NoteList.appendChild(NoteDiv);
+                });
+            }
+
+            function editNote(index) {
+                const NoteToEdit = Notes[index];
+                form.setAttribute("data-selected-index", index);
+
+                document.getElementById("NoteName").value = NoteToEdit.name;
+                document.getElementById("NoteContent").value = NoteToEdit.Content;
+
+                updateButtonLabel("SAVE CHANGES");
+            }
+
+            function deleteNote(index) {
+                Notes.splice(index, 1);
+                localStorage.setItem("Notes", JSON.stringify(Notes));
+                displayNotes();
+                updateButtonLabel("ADD A NOTE");
+            }
+
+            function updateButtonLabel(label) {
+                const submitButton = document.querySelector("#NoteForm button[type='submit']");
+                submitButton.textContent = label;
+            }
+
+            displayNotes();
+        });
+    </script>
+
+</head>
+<body>
+    <form id="NoteForm">
+        <label for="NoteName">TITLE:</label>
+        <input type="text" id="NoteName" required>
+
+        <label for="NoteContent">CONTENT:</label>
+        <input type="text" id="NoteContent" required>
+
+        <button type="submit">ADD A NOTE</button>
+    </form>
+
+    <div id="NoteList">
+    </div>
+</body>
+</html>
